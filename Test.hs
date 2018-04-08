@@ -672,7 +672,10 @@ test_glfwCreateWindowSurface p'win = do
     if support == 1
     then do
         alloca $ \p'surface -> do
-          let resPtr = p'surface :: Ptr ()
+          -- This should be a void pointer, but void was only made storable in
+          -- base-4.9, so just use a Ptr CDouble since they should arguably both
+          -- work.
+          let resPtr = p'surface :: Ptr CDouble
           shouldNotBeSuccessful <-
             c'glfwCreateWindowSurface nullPtr p'win nullPtr resPtr
           assertBool "c'glfwCreateSurface was successful??" $
